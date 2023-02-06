@@ -2,6 +2,8 @@
 import { ref } from "vue";
 // -- donnée réactive pour la saisie du libellé
 const libelle = ref("");
+// url pour ajouter un Todo
+const url  = "https://webmmi.iut-tlse3.fr/~pecatte/todos/public/2/todos";
 // -- les events émis par le composant
 const emit = defineEmits(["addc"]);
 // -- handler utile si on veut gérer le submit de cette manière

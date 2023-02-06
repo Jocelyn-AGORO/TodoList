@@ -1,7 +1,7 @@
 <script setup>
 // -- import de la fonction permettant de déclarer
 //   une variable comme une varianel d'ETAT
-import { reactive } from "vue";
+import { reactive, onMounted } from "vue";
 
 // -- les 2 sous composants utilisés
 import ToDoListItem from "./ToDoListItem.vue";
@@ -9,6 +9,9 @@ import ToDoForm from "./ToDoForm.vue";
 
 // -- la classe Chose
 import Chose from "../Chose";
+
+// url de l'api
+const url = "https://webmmi.iut-tlse3.fr/~pecatte/todos/public/2/todos"
 
 // -- la liste des choses --> dans le state
 // --> donnée réactive = l'affichage sera actualisée
@@ -21,23 +24,56 @@ function getTodos(){
   fetch (url, fetchOptions)
   .then((response)=>{
     return response.json();
-  )
-  }
+  })
+  .then((data)=>{
+    data.forEach((todo) => {
+      listeC.push(new Chose(todo.id, todo.libelle , todo.fait))
+    })
+    console.log(data);
+  })
+}
 
+onMounted(() => {
+  getTodos();
+    })
 // -- handler pour 'faire/défaire' une chose à prtir de l'index dans la liste
 function handlerFaire(idx) {
   listeC[idx].faire();
 }
 // -- handle pour supprimer une chose à prtir de l'index dans la liste
 function handlerDelete(idx) {
-  listeC.splice(idx, 1);
+  // const paramètres de fetch
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  const fetchOptions = {
+    method: "DELETE",
+    headers: myHeaders
+  };
+
 }
 // -- handler pour ajouter une nouvelle chose à partir
 //    du libelle saisi dans le formulaire
 //     qui se retrouve en paramétre
 function handlerAdd(libelle) {
-  // -- il faut créer une nouvelle "chsoe" instance de la classe
-  listeC.push(new Chose(libelle));
+  // const paramètres de fetch
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  const fetchOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify({ libelle : libelle }),
+  };
+  // fonction pour ajouter une chose
+  fetch (url, fetchOptions)
+      .then((response)=>{
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
 }
 </script>
 
